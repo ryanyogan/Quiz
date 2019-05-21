@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Alert } from "../components/Alert";
 import { Button, ButtonContainer } from "../components/Button";
 import TEMP_QUESTIONS from "../data/computers";
 
@@ -27,22 +28,27 @@ class Quiz extends Component {
   state = {
     correctCount: 0,
     totalCount: TEMP_QUESTIONS.length,
-    activeQuestionIndex: 0
+    activeQuestionIndex: 0,
+    answered: false,
+    answerCorrect: false
   };
 
   answer = correct => {
     this.setState(
       state => {
-        const nextState = {};
+        const nextState = { answered: true };
 
         if (correct) {
           nextState.correctCount = state.correctCount + 1;
+          nextState.answerCorrect = true;
+        } else {
+          nextState.answerCorrect = false;
         }
 
         return nextState;
       },
       () => {
-        this.nextQuestion();
+        setTimeout(() => this.nextQuestion(), 750);
       }
     );
   };
@@ -55,7 +61,8 @@ class Quiz extends Component {
         nextIndex = 0;
       }
       return {
-        activeQuestionIndex: nextIndex
+        activeQuestionIndex: nextIndex,
+        answered: false
       };
     });
   };
@@ -85,6 +92,10 @@ class Quiz extends Component {
             {`${this.state.correctCount}/${this.state.totalCount}`}
           </Text>
         </SafeAreaView>
+        <Alert
+          correct={this.state.answerCorrect}
+          visible={this.state.answered}
+        />
       </View>
     );
   }
